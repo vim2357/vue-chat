@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useChat } from './composables/useChat';
 import { useAutoScroll } from './composables/useAutoScroll';
 import { useTypingIndicator } from './composables/useTypingIndicator';
