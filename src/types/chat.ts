@@ -1,6 +1,6 @@
 export interface Message {
   id: number;
-  text: string;
+  text?: string;
   author: string;
   timestamp: Date;
   isOwn: boolean;
@@ -17,8 +17,8 @@ export interface ChatState {
   messages: Message[];
   currentUser: string;
   isTyping: boolean;
-  filter: FilterType;
-  theme: 'light' | 'dark'; // НОВОЕ: тема
+  filter?: FilterType;
+  theme?: 'light' | 'dark'; // НОВОЕ: тема
 }
 
 export type FilterType = 'all' | 'own' | 'others';

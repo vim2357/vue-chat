@@ -9,7 +9,7 @@ export function useChat() {
   const chatState = reactive<ChatState>({
     messages: [],
     currentUser: '',
-    isTyping: false
+    isTyping: false,
   });
 
   // computed - производные значения
@@ -109,6 +109,26 @@ export function useChat() {
     localStorage.removeItem('vue-chat-messages');
   };
 
+  const addReaction = (messageId: number, emoji: string ) => {
+    const message = chatState.messages.find(m => m.id === messageId)
+    if (!message) return;
+
+    if (!message.reactions) {
+      message.reactions = []
+    }
+
+    const existingReaction = message.reactions.find(r => r.userId === chatState.currentUser && r.emoji === emoji)
+
+    if (existingReaction) {
+      message.reactions = message.reactions.filter(r => !(r.userId === chatState.currentUser && r.emoji === emoji))
+    }
+    else {
+      message.reactions.push({
+        emoji, userId: chatState.currentUser, userName: chatState.currentUser
+      })
+    }
+  }
+
   return {
     messageText,
     chatState,
@@ -117,6 +137,7 @@ export function useChat() {
     lastMessage,
     sendMessage,
     clearChat,
-    loadFromStorage
+    loadFromStorage,
+    addReaction
   };
 }

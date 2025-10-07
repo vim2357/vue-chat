@@ -61,6 +61,7 @@
             v-for="message in chatState.messages"
             :key="message.id"
             :message="message"
+            @add-reaction="addReaction"
           />
 
           <TypingIndicator :show="chatState.isTyping" />
@@ -104,7 +105,8 @@ const {
   hasMessages,
   sendMessage,
   clearChat,
-  loadFromStorage
+  loadFromStorage,
+  addReaction
 } = useChat();
 
 const { scrollContainer } = useAutoScroll(chatState.messages);

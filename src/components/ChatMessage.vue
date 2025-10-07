@@ -8,18 +8,72 @@
         </span>
       </div>
       <p class="message-text">{{ message.text }}</p>
+
+      <div v-if="hasReactions">
+        <span v-for="(reaction, index) in groupedReactions" :key="index"
+        :title="reaction.users.join(', ')"
+        @click="$emit('addReaction', message.id, reaction.emoji)">
+          {{reaction.emoji}} {{reaction.count}}
+        </span>
+      </div>
+
+      <div>
+        <button v-for="emoji in availableEmojis" :key="emoji"
+                @click="$emit('addReaction', message.id, emoji)"
+                :title="`Добавить ${emoji}`"
+        >
+          {{emoji}}
+        </button>
+
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Message } from '../types/chat';
+import { computed } from 'vue'
 
 // defineProps с TypeScript
 const props = defineProps<{
   message: Message;
 }>();
 
+const emit = defineEmits<{
+  addReaction: [messageId: number, emoji: string];
+}>();
+
+const availableEmojis = ['😂', '🤣', '❤️', '🔥', '👍🏾']
+
+const groupedReactions = computed(() => {
+  if(!props.message.reactions || props.message.reactions.length === 0) {
+    return []
+  }
+
+  type GroupedReaction = {
+    emoji: string;
+    count: number;
+    users: string[];
+  }
+  const grouped = props.message.reactions.reduce((acc, reaction) => {
+
+    if (!acc[reaction.emoji]) {
+      acc[reaction.emoji] = {
+        emoji: reaction.emoji,
+        count: 1,
+        users: [reaction.userName]
+      }
+    }
+    else {
+      acc[reaction.emoji]!.count++
+      acc[reaction.emoji]!.users.push(reaction.userName)
+    }
+    return acc;
+  }, {} as Record<string, { emoji: string, count: number, users: string[] }>)
+    return Object.values(grouped)
+})
+
+const hasReactions = computed(() => props.message.reactions && props.message.reactions.length > 0)
 const formatTime = (date: Date): string => {
   return date.toLocaleTimeString('ru-RU', {
     hour: '2-digit',
